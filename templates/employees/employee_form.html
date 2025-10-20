@@ -1,0 +1,38 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ title }} - HR Internal System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-1">{{ title }}</h1>
+                    <p class="text-muted mb-0">
+                        {% if object %}Editar informações do colaborador{% else %}Cadastrar novo colaborador{% endif %}
+                    </p>
+                </div>
+                <a href="{% url 'employees:list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i>
+                    Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Form -->
+    <div class="row justify-content-center">
+        <div class="col-xl-10">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    {% crispy form %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,365 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ title }} - HR Internal System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h1 class="h3 mb-1">{{ title }}</h1>
+                    <p class="text-muted mb-0">
+                        Gerencie eventos, férias e compromissos da equipe
+                    </p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quickEventModal">
+                        <i class="bi bi-calendar-plus"></i>
+                        Evento Rápido
+                    </button>
+                    <a href="{% url 'calendar:event_create' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-plus-circle"></i>
+                        Novo Evento
+                    </a>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-gear"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'calendar:settings' %}">
+                                <i class="bi bi-gear"></i> Configurações
+                            </a></li>
+                            <li><a class="dropdown-item" href="{% url 'calendar:notifications' %}">
+                                <i class="bi bi-bell"></i> Notificações
+                            </a></li>
+                            {% if user_permissions.is_admin %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'calendar:stats' %}">
+                                    <i class="bi bi-graph-up"></i> Estatísticas
+                                </a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        {% if user_permissions.is_admin %}
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                                    <i class="bi bi-calendar-event text-primary fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="card-title mb-1">Total de Eventos</h6>
+                                <h4 class="mb-0">{{ stats.total_events|default:0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                                    <i class="bi bi-clock text-warning fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="card-title mb-1">Pendentes</h6>
+                                <h4 class="mb-0">{{ stats.pending_events|default:0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                                    <i class="bi bi-check-circle text-success fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="card-title mb-1">Aprovados</h6>
+                                <h4 class="mb-0">{{ stats.approved_events|default:0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-info bg-opacity-10 rounded-3 p-3">
+                                    <i class="bi bi-calendar3 text-info fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="card-title mb-1">Próximos</h6>
+                                <h4 class="mb-0">{{ stats.upcoming_events|default:0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                                    <i class="bi bi-calendar-event text-primary fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="card-title mb-1">Meus Eventos</h6>
+                                <h4 class="mb-0">{{ stats.my_events|default:0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                                    <i class="bi bi-clock text-warning fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="card-title mb-1">Pendentes</h6>
+                                <h4 class="mb-0">{{ stats.my_pending|default:0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                                    <i class="bi bi-check-circle text-success fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="card-title mb-1">Aprovados</h6>
+                                <h4 class="mb-0">{{ stats.my_approved|default:0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-info bg-opacity-10 rounded-3 p-3">
+                                    <i class="bi bi-calendar3 text-info fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="card-title mb-1">Próximos</h6>
+                                <h4 class="mb-0">{{ stats.my_upcoming|default:0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Calendar -->
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-calendar3"></i>
+                        Calendário de Eventos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="calendar" data-events-url="{% url 'calendar:events_json' %}"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3">
+            <!-- Filters -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent">
+                    <h6 class="card-title mb-0">
+                        <i class="bi bi-funnel"></i>
+                        Filtros
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% crispy filter_form %}
+                </div>
+            </div>
+            
+            <!-- Legend -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h6 class="card-title mb-0">
+                        <i class="bi bi-palette"></i>
+                        Legenda
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="bg-success rounded me-2" style="width: 16px; height: 16px;"></div>
+                        <small>Férias</small>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="bg-info rounded me-2" style="width: 16px; height: 16px;"></div>
+                        <small>Visita Interna</small>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="bg-primary rounded me-2" style="width: 16px; height: 16px;"></div>
+                        <small>Reunião</small>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="bg-warning rounded me-2" style="width: 16px; height: 16px;"></div>
+                        <small>Treinamento</small>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="bg-danger rounded me-2" style="width: 16px; height: 16px;"></div>
+                        <small>Feriado</small>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-secondary rounded me-2" style="width: 16px; height: 16px;"></div>
+                        <small>Outros</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Event Modal -->
+<div class="modal fade" id="quickEventModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-calendar-plus"></i>
+                    Criar Evento Rápido
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                {% crispy quick_form %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize calendar
+    var calendarEl = document.getElementById('calendar');
+    if (calendarEl) {
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'pt-br',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: '{% url "calendar:events_json" %}',
+            eventClick: function(info) {
+                if (info.event.url) {
+                    window.open(info.event.url, '_self');
+                    info.jsEvent.preventDefault();
+                }
+            },
+            height: 600,
+            dayMaxEvents: true,
+            moreLinkClick: 'popover',
+            eventDisplay: 'block',
+            displayEventTime: true,
+            eventTimeFormat: {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            }
+        });
+        
+        calendar.render();
+        
+        // Handle filter form changes
+        document.querySelectorAll('#id_event_type input, #id_status input, #id_employee input').forEach(function(input) {
+            input.addEventListener('change', function() {
+                calendar.refetchEvents();
+            });
+        });
+    }
+    
+    // Handle quick event form
+    var quickForm = document.querySelector('#quickEventModal form');
+    if (quickForm) {
+        quickForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var formData = new FormData(this);
+            
+            fetch('{% url "calendar:event_quick_create" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    calendar.addEvent(data.event);
+                    bootstrap.Modal.getInstance(document.getElementById('quickEventModal')).hide();
+                    this.reset();
+                } else {
+                    showToast('Erro ao criar evento.', 'danger');
+                }
+            })
+            .catch(error => {
+                showToast('Erro de conexão.', 'danger');
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

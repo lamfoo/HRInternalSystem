@@ -1,0 +1,84 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ title }} - HR Internal System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-1">{{ title }}</h1>
+                    <p class="text-muted mb-0">
+                        Gerencie suas informações pessoais
+                    </p>
+                </div>
+                <a href="{% url 'core:dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i>
+                    Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profile Info -->
+    <div class="row g-4">
+        <!-- Current Profile -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    {% if profile.avatar %}
+                        <img src="{{ profile.avatar.url }}" alt="Avatar" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 120px; height: 120px;">
+                            <i class="bi bi-person text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <h4 class="mb-1">{{ user.get_full_name|default:user.username }}</h4>
+                    <p class="text-muted mb-3">{{ profile.department|default:"Sem departamento" }}</p>
+                    
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="border-end">
+                                <h6 class="mb-0">{{ user.date_joined|date:"M Y" }}</h6>
+                                <small class="text-muted">Membro desde</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <h6 class="mb-0">
+                                {% if user.is_superuser %}
+                                    Admin
+                                {% elif user.groups.exists %}
+                                    {{ user.groups.first.name }}
+                                {% else %}
+                                    Usuário
+                                {% endif %}
+                            </h6>
+                            <small class="text-muted">Tipo de conta</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Edit Profile Form -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-pencil"></i>
+                        Editar Perfil
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    {% crispy form %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,318 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - HR Internal System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-1">Dashboard</h1>
+                    <p class="text-muted mb-0">
+                        Bem-vindo, {{ user.get_full_name|default:user.username }}!
+                    </p>
+                </div>
+                <div class="text-muted">
+                    <i class="bi bi-calendar3"></i>
+                    {% now "d \d\e F \d\e Y" %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        {% if user_permissions.is_admin %}
+            <!-- Admin Statistics -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                                    <i class="bi bi-people text-primary fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="card-title mb-1">Colaboradores Ativos</h6>
+                                <h4 class="mb-0">{{ stats.total_employees|default:0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                                    <i class="bi bi-file-earmark-text text-warning fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="card-title mb-1">Documentos Pendentes</h6>
+                                <h4 class="mb-0">{{ stats.pending_documents|default:0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-info bg-opacity-10 rounded-3 p-3">
+                                    <i class="bi bi-book text-info fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="card-title mb-1">Base de Conhecimento</h6>
+                                <h4 class="mb-0">{{ stats.total_knowledge_entries|default:0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                                    <i class="bi bi-calendar-event text-success fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="card-title mb-1">Próximos Eventos</h6>
+                                <h4 class="mb-0">{{ stats.upcoming_events|default:0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <!-- Employee Statistics -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                                    <i class="bi bi-file-earmark-text text-primary fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="card-title mb-1">Documentos Pendentes</h6>
+                                <h4 class="mb-0">{{ stats.my_pending_documents|default:0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                                    <i class="bi bi-check-circle text-success fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="card-title mb-1">Documentos Aprovados</h6>
+                                <h4 class="mb-0">{{ stats.my_approved_documents|default:0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="bg-info bg-opacity-10 rounded-3 p-3">
+                                    <i class="bi bi-calendar-event text-info fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="card-title mb-1">Meus Eventos</h6>
+                                <h4 class="mb-0">{{ stats.my_events|default:0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-person-circle text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                        <h6 class="card-title mb-1">Usuário Atual</h6>
+                        <p class="text-muted mb-0">{{ stats.current_user }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-lightning"></i>
+                        Ações Rápidas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <!-- Request Document -->
+                        <div class="col-lg-3 col-md-6">
+                            <a href="{% url 'documents:create' %}" class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3 text-decoration-none">
+                                <i class="bi bi-file-plus fs-1 mb-2"></i>
+                                <span class="fw-semibold">Solicitar Documento</span>
+                                <small class="text-muted">Nova requisição</small>
+                            </a>
+                        </div>
+                        
+                        <!-- Create Knowledge Entry -->
+                        <div class="col-lg-3 col-md-6">
+                            <a href="{% url 'knowledge_base:create' %}" class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3 text-decoration-none">
+                                <i class="bi bi-plus-circle fs-1 mb-2"></i>
+                                <span class="fw-semibold">Nova Entrada</span>
+                                <small class="text-muted">Base de conhecimento</small>
+                            </a>
+                        </div>
+                        
+                        <!-- Create Event -->
+                        <div class="col-lg-3 col-md-6">
+                            <a href="{% url 'calendar:event_create' %}" class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3 text-decoration-none">
+                                <i class="bi bi-calendar-plus fs-1 mb-2"></i>
+                                <span class="fw-semibold">Novo Evento</span>
+                                <small class="text-muted">Calendário</small>
+                            </a>
+                        </div>
+                        
+                        <!-- View Profile -->
+                        <div class="col-lg-3 col-md-6">
+                            <a href="{% url 'accounts:profile' %}" class="btn btn-outline-secondary w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3 text-decoration-none">
+                                <i class="bi bi-person fs-1 mb-2"></i>
+                                <span class="fw-semibold">Meu Perfil</span>
+                                <small class="text-muted">Configurações</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity / Notifications -->
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-clock-history"></i>
+                        Atividade Recente
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-primary bg-opacity-10 rounded-circle p-2">
+                                        <i class="bi bi-file-earmark-text text-primary"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">Sistema inicializado</h6>
+                                    <p class="text-muted mb-0 small">
+                                        Bem-vindo ao HR Internal System da INFRASECUR MOÇAMBIQUE LTD
+                                    </p>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <small class="text-muted">Agora</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="list-group-item border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-success bg-opacity-10 rounded-circle p-2">
+                                        <i class="bi bi-check-circle text-success"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">Sistema pronto para uso</h6>
+                                    <p class="text-muted mb-0 small">
+                                        Todos os módulos estão funcionando corretamente
+                                    </p>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <small class="text-muted">Agora</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-info-circle"></i>
+                        Informações do Sistema
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Versão:</span>
+                                <span class="fw-semibold">1.0.0</span>
+                            </div>
+                        </li>
+                        <li class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Usuários Totais:</span>
+                                <span class="fw-semibold">{{ stats.total_users|default:1 }}</span>
+                            </div>
+                        </li>
+                        <li class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Status:</span>
+                                <span class="badge bg-success">Online</span>
+                            </div>
+                        </li>
+                        <li class="mb-0">
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Última Atualização:</span>
+                                <span class="fw-semibold">{% now "d/m/Y" %}</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

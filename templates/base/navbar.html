@@ -1,0 +1,180 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+    <div class="container-fluid">
+        <!-- Brand -->
+        <a class="navbar-brand fw-bold" href="{% url 'core:dashboard' %}">
+            <i class="bi bi-building"></i>
+            HR Internal System
+        </a>
+        
+        <!-- Mobile Toggle -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <!-- Navigation Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <!-- Dashboard -->
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" 
+                       href="{% url 'core:dashboard' %}">
+                        <i class="bi bi-speedometer2"></i>
+                        Dashboard
+                    </a>
+                </li>
+                
+                <!-- Colaboradores -->
+                {% if user_permissions.is_admin %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-people"></i>
+                            Colaboradores
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'employees:list' %}">
+                                <i class="bi bi-list"></i> Lista de Colaboradores
+                            </a></li>
+                            <li><a class="dropdown-item" href="{% url 'employees:create' %}">
+                                <i class="bi bi-person-plus"></i> Novo Colaborador
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'employees:stats' %}">
+                                <i class="bi bi-graph-up"></i> Estatísticas
+                            </a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'employees:list' %}">
+                            <i class="bi bi-person"></i>
+                            Meu Perfil
+                        </a>
+                    </li>
+                {% endif %}
+                
+                <!-- Documentos -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-file-earmark-text"></i>
+                        Documentos
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'documents:list' %}">
+                            <i class="bi bi-list"></i> Minhas Requisições
+                        </a></li>
+                        <li><a class="dropdown-item" href="{% url 'documents:create' %}">
+                            <i class="bi bi-file-plus"></i> Nova Requisição
+                        </a></li>
+                        {% if user_permissions.is_admin %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'documents:stats' %}">
+                                <i class="bi bi-graph-up"></i> Estatísticas
+                            </a></li>
+                            <li><a class="dropdown-item" href="{% url 'documents:template_list' %}">
+                                <i class="bi bi-file-earmark-code"></i> Templates
+                            </a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                
+                <!-- Base de Conhecimento -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-book"></i>
+                        Conhecimento
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'knowledge_base:home' %}">
+                            <i class="bi bi-house"></i> Base de Conhecimento
+                        </a></li>
+                        <li><a class="dropdown-item" href="{% url 'knowledge_base:create' %}">
+                            <i class="bi bi-plus-circle"></i> Nova Entrada
+                        </a></li>
+                        {% if user_permissions.is_admin %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'knowledge_base:category_list' %}">
+                                <i class="bi bi-tags"></i> Categorias
+                            </a></li>
+                            <li><a class="dropdown-item" href="{% url 'knowledge_base:stats' %}">
+                                <i class="bi bi-graph-up"></i> Estatísticas
+                            </a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                
+                <!-- Calendário -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-calendar"></i>
+                        Calendário
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'calendar:home' %}">
+                            <i class="bi bi-calendar3"></i> Calendário
+                        </a></li>
+                        <li><a class="dropdown-item" href="{% url 'calendar:event_create' %}">
+                            <i class="bi bi-calendar-plus"></i> Novo Evento
+                        </a></li>
+                        <li><a class="dropdown-item" href="{% url 'calendar:notifications' %}">
+                            <i class="bi bi-bell"></i> Notificações
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'calendar:settings' %}">
+                            <i class="bi bi-gear"></i> Configurações
+                        </a></li>
+                        {% if user_permissions.is_admin %}
+                            <li><a class="dropdown-item" href="{% url 'calendar:stats' %}">
+                                <i class="bi bi-graph-up"></i> Estatísticas
+                            </a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+            </ul>
+            
+            <!-- User Menu -->
+            <ul class="navbar-nav">
+                <!-- Admin Menu -->
+                {% if user_permissions.is_admin %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-shield-check"></i>
+                            Admin
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'accounts:manage_users' %}">
+                                <i class="bi bi-people"></i> Gerenciar Usuários
+                            </a></li>
+                            <li><a class="dropdown-item" href="{% url 'accounts:create_user' %}">
+                                <i class="bi bi-person-plus"></i> Criar Usuário
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/admin/" target="_blank">
+                                <i class="bi bi-gear-fill"></i> Django Admin
+                            </a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+                
+                <!-- User Profile -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i>
+                        {{ user.get_full_name|default:user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">
+                            <i class="bi bi-person"></i> Meu Perfil
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">
+                            <i class="bi bi-box-arrow-right"></i> Sair
+                        </a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,51 @@
+<footer class="bg-light border-top mt-auto py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="fw-bold text-primary">HR Internal System</h6>
+                <p class="text-muted small mb-2">
+                    Sistema interno de gerenciamento de recursos humanos da INFRASECUR MOÇAMBIQUE LTD.
+                </p>
+                <p class="text-muted small mb-0">
+                    <i class="bi bi-geo-alt"></i>
+                    Rua da Resistência, nº 1234 - Maputo, Moçambique
+                </p>
+            </div>
+            
+            <div class="col-md-3">
+                <h6 class="fw-bold">Links Rápidos</h6>
+                <ul class="list-unstyled small">
+                    <li><a href="{% url 'core:dashboard' %}" class="text-decoration-none">Dashboard</a></li>
+                    <li><a href="{% url 'knowledge_base:home' %}" class="text-decoration-none">Base de Conhecimento</a></li>
+                    <li><a href="{% url 'calendar:home' %}" class="text-decoration-none">Calendário</a></li>
+                    <li><a href="{% url 'accounts:profile' %}" class="text-decoration-none">Meu Perfil</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-md-3">
+                <h6 class="fw-bold">Contato</h6>
+                <ul class="list-unstyled small text-muted">
+                    <li><i class="bi bi-telephone"></i> +258 21 123 456</li>
+                    <li><i class="bi bi-envelope"></i> rh@infrasecur.co.mz</li>
+                    <li><i class="bi bi-clock"></i> Seg-Sex: 08:00-17:00</li>
+                </ul>
+            </div>
+        </div>
+        
+        <hr class="my-4">
+        
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <p class="text-muted small mb-0">
+                    &copy; {% now "Y" %} INFRASECUR MOÇAMBIQUE LTD. Todos os direitos reservados.
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="text-muted small mb-0">
+                    Versão 1.0 | 
+                    <a href="#" class="text-decoration-none">Suporte Técnico</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>

@@ -1,0 +1,231 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - HR Internal System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h1 class="h3 mb-1">{{ title }}</h1>
+                    <p class="text-muted mb-0">
+                        Gerenciamento de colaboradores da empresa
+                    </p>
+                </div>
+                {% if user_permissions.is_admin %}
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'employees:create' %}" class="btn btn-primary">
+                            <i class="bi bi-person-plus"></i>
+                            Novo Colaborador
+                        </a>
+                        <a href="{% url 'employees:stats' %}" class="btn btn-outline-info">
+                            <i class="bi bi-graph-up"></i>
+                            Estatísticas
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Search and Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-4">
+                            {{ form.search }}
+                        </div>
+                        <div class="col-md-2">
+                            {{ form.status }}
+                        </div>
+                        <div class="col-md-3">
+                            {{ form.department }}
+                        </div>
+                        <div class="col-md-2">
+                            {{ form.contract_type }}
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Results -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-people"></i>
+                            Colaboradores
+                        </h5>
+                        <span class="badge bg-primary">
+                            {{ page_obj.paginator.count }} colaborador{{ page_obj.paginator.count|pluralize:"es" }}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    {% if page_obj %}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Cargo</th>
+                                        <th>Departamento</th>
+                                        <th>Contrato</th>
+                                        <th>Status</th>
+                                        <th>Salário</th>
+                                        <th class="text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for employee in page_obj %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3">
+                                                        <i class="bi bi-person text-primary"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-0">{{ employee.full_name }}</h6>
+                                                        <small class="text-muted">{{ employee.email }}</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>{{ employee.position }}</td>
+                                            <td>{{ employee.department|default:"-" }}</td>
+                                            <td>
+                                                <span class="badge bg-light text-dark">
+                                                    {{ employee.get_contract_type_display }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {% if employee.status == 'active' %}
+                                                    <span class="badge bg-success">Ativo</span>
+                                                {% elif employee.status == 'inactive' %}
+                                                    <span class="badge bg-secondary">Inativo</span>
+                                                {% elif employee.status == 'suspended' %}
+                                                    <span class="badge bg-warning">Suspenso</span>
+                                                {% else %}
+                                                    <span class="badge bg-info">{{ employee.get_status_display }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <span class="fw-semibold">{{ employee.net_salary|floatformat:2 }} MT</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="{% url 'employees:detail' employee.pk %}" 
+                                                       class="btn btn-outline-primary" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="Ver detalhes">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    {% if user_permissions.is_admin %}
+                                                        <a href="{% url 'employees:edit' employee.pk %}" 
+                                                           class="btn btn-outline-secondary"
+                                                           data-bs-toggle="tooltip" 
+                                                           title="Editar">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        {% if page_obj.has_other_pages %}
+                            <div class="card-footer bg-transparent">
+                                <nav aria-label="Navegação de páginas">
+                                    <ul class="pagination justify-content-center mb-0">
+                                        {% if page_obj.has_previous %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                                    <i class="bi bi-chevron-double-left"></i>
+                                                </a>
+                                            </li>
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                                    <i class="bi bi-chevron-left"></i>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                        
+                                        <li class="page-item active">
+                                            <span class="page-link">
+                                                {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                                            </span>
+                                        </li>
+                                        
+                                        {% if page_obj.has_next %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                                    <i class="bi bi-chevron-right"></i>
+                                                </a>
+                                            </li>
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                                    <i class="bi bi-chevron-double-right"></i>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-people text-muted" style="font-size: 4rem;"></i>
+                            <h4 class="text-muted mt-3">Nenhum colaborador encontrado</h4>
+                            <p class="text-muted">Tente ajustar os filtros de busca ou adicione novos colaboradores.</p>
+                            {% if user_permissions.is_admin %}
+                                <a href="{% url 'employees:create' %}" class="btn btn-primary">
+                                    <i class="bi bi-person-plus"></i>
+                                    Adicionar Colaborador
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .avatar-sm {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .table th {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.875rem;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+    }
+    
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+    }
+</style>
+{% endblock %}
