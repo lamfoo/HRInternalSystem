@@ -1,0 +1,174 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - HR Internal System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-1">{{ employee.full_name }}</h1>
+                    <p class="text-muted mb-0">{{ employee.position }} - {{ employee.department|default:"Sem departamento" }}</p>
+                </div>
+                <div class="d-flex gap-2">
+                    {% if user_permissions.is_admin %}
+                        <a href="{% url 'employees:edit' employee.pk %}" class="btn btn-primary">
+                            <i class="bi bi-pencil"></i>
+                            Editar
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'employees:list' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i>
+                        Voltar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Employee Details -->
+    <div class="row g-4">
+        <!-- Personal Info -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person"></i>
+                        Informações Pessoais
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Nome Completo:</dt>
+                        <dd class="col-sm-8">{{ employee.full_name }}</dd>
+                        
+                        <dt class="col-sm-4">Email:</dt>
+                        <dd class="col-sm-8">{{ employee.email }}</dd>
+                        
+                        <dt class="col-sm-4">Telefone:</dt>
+                        <dd class="col-sm-8">{{ employee.phone|default:"-" }}</dd>
+                        
+                        <dt class="col-sm-4">Documento:</dt>
+                        <dd class="col-sm-8">{{ employee.id_document }}</dd>
+                        
+                        <dt class="col-sm-4">NUIT:</dt>
+                        <dd class="col-sm-8">{{ employee.nuit|default:"-" }}</dd>
+                        
+                        <dt class="col-sm-4">Data de Nascimento:</dt>
+                        <dd class="col-sm-8">{{ employee.birth_date|default:"-" }}</dd>
+                        
+                        <dt class="col-sm-4">Endereço:</dt>
+                        <dd class="col-sm-8">{{ employee.address }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Professional Info -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-briefcase"></i>
+                        Informações Profissionais
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Cargo:</dt>
+                        <dd class="col-sm-8">{{ employee.position }}</dd>
+                        
+                        <dt class="col-sm-4">Departamento:</dt>
+                        <dd class="col-sm-8">{{ employee.department|default:"-" }}</dd>
+                        
+                        <dt class="col-sm-4">Tipo de Contrato:</dt>
+                        <dd class="col-sm-8">{{ employee.get_contract_type_display }}</dd>
+                        
+                        <dt class="col-sm-4">Data de Início:</dt>
+                        <dd class="col-sm-8">{{ employee.start_date }}</dd>
+                        
+                        <dt class="col-sm-4">Status:</dt>
+                        <dd class="col-sm-8">
+                            {% if employee.status == 'active' %}
+                                <span class="badge bg-success">{{ employee.get_status_display }}</span>
+                            {% elif employee.status == 'inactive' %}
+                                <span class="badge bg-secondary">{{ employee.get_status_display }}</span>
+                            {% else %}
+                                <span class="badge bg-warning">{{ employee.get_status_display }}</span>
+                            {% endif %}
+                        </dd>
+                        
+                        <dt class="col-sm-4">Tempo de Serviço:</dt>
+                        <dd class="col-sm-8">{{ employee.years_of_service }} ano{{ employee.years_of_service|pluralize:"s" }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Salary Info -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-currency-dollar"></i>
+                        Informações Salariais
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-6">Salário Líquido:</dt>
+                        <dd class="col-sm-6"><strong>{{ employee.net_salary|floatformat:2 }} MT</strong></dd>
+                        
+                        <dt class="col-sm-6">Subsídio Alimentação:</dt>
+                        <dd class="col-sm-6">{{ employee.daily_allowance|default:"0"|floatformat:2 }} MT</dd>
+                        
+                        <dt class="col-sm-6">Remuneração Adicional:</dt>
+                        <dd class="col-sm-6">{{ employee.additional_remuneration|default:"0"|floatformat:2 }} MT</dd>
+                        
+                        <dt class="col-sm-6">Renda Total:</dt>
+                        <dd class="col-sm-6"><strong class="text-success">{{ employee.total_monthly_income|floatformat:2 }} MT</strong></dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        
+        <!-- System Info -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-gear"></i>
+                        Informações do Sistema
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-6">Usuário do Sistema:</dt>
+                        <dd class="col-sm-6">
+                            {% if employee.user %}
+                                <span class="badge bg-success">{{ employee.user.username }}</span>
+                            {% else %}
+                                <span class="text-muted">Não vinculado</span>
+                            {% endif %}
+                        </dd>
+                        
+                        <dt class="col-sm-6">Cadastrado em:</dt>
+                        <dd class="col-sm-6">{{ employee.created_at|date:"d/m/Y H:i" }}</dd>
+                        
+                        <dt class="col-sm-6">Atualizado em:</dt>
+                        <dd class="col-sm-6">{{ employee.updated_at|date:"d/m/Y H:i" }}</dd>
+                        
+                        {% if employee.created_by %}
+                            <dt class="col-sm-6">Cadastrado por:</dt>
+                            <dd class="col-sm-6">{{ employee.created_by.get_full_name|default:employee.created_by.username }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

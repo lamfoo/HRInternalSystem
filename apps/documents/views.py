@@ -294,24 +294,21 @@ def document_download(request, pk):
 
 # Views para Templates de Documentos
 
-@method_decorator(login_required, name='dispatch')
-@method_decorator(user_passes_test(is_admin), name='dispatch')
-class DocumentTemplateListView(CreateView):
+@login_required
+@user_passes_test(is_admin)
+def document_template_list(request):
     """
     Lista templates de documentos (apenas admins).
     """
-    model = DocumentTemplate
-    template_name = 'documents/template_list.html'
-    context_object_name = 'templates'
+    templates = DocumentTemplate.objects.all().order_by('document_type', 'name')
     
-    def get_queryset(self):
-        return DocumentTemplate.objects.all().order_by('document_type', 'name')
+    context = {
+        'templates': templates,
+        'title': 'Templates de Documentos',
+        'user_permissions': get_user_permissions(request.user)
+    }
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Templates de Documentos'
-        context['user_permissions'] = get_user_permissions(self.request.user)
-        return context
+    return render(request, 'documents/template_list.html', context)
 
 
 @method_decorator(login_required, name='dispatch')

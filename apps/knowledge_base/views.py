@@ -305,26 +305,23 @@ def add_rating(request, pk):
 
 # Views para Categorias
 
-@method_decorator(login_required, name='dispatch')
-@method_decorator(user_passes_test(is_admin), name='dispatch')
-class KnowledgeCategoryListView(CreateView):
+@login_required
+@user_passes_test(is_admin)
+def knowledge_category_list(request):
     """
     Lista categorias da base de conhecimento (apenas admins).
     """
-    model = KnowledgeCategory
-    template_name = 'knowledge_base/category_list.html'
-    context_object_name = 'categories'
+    categories = KnowledgeCategory.objects.all().annotate(
+        entries_count=Count('entries')
+    ).order_by('name')
     
-    def get_queryset(self):
-        return KnowledgeCategory.objects.all().annotate(
-            entries_count=Count('entries')
-        ).order_by('name')
+    context = {
+        'categories': categories,
+        'title': 'Categorias da Base de Conhecimento',
+        'user_permissions': get_user_permissions(request.user)
+    }
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Categorias da Base de Conhecimento'
-        context['user_permissions'] = get_user_permissions(self.request.user)
-        return context
+    return render(request, 'knowledge_base/category_list.html', context)
 
 
 @method_decorator(login_required, name='dispatch')

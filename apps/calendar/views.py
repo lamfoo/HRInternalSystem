@@ -460,11 +460,7 @@ def calendar_stats(request):
             start_date__gte=timezone.now()
         ).order_by('start_date')[:10],
         'recent_events': CalendarEvent.objects.order_by('-created_at')[:10],
-        'average_duration': CalendarEvent.objects.filter(
-            status='approved'
-        ).extra(
-            select={'duration': 'EXTRACT(EPOCH FROM (end_date - start_date))/3600'}
-        ).aggregate(avg_duration=Avg('duration'))['avg_duration'] or 0,
+        'average_duration': 0,  # Será implementado posteriormente
     }
     
     context = {

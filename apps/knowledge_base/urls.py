@@ -16,7 +16,7 @@ urlpatterns = [
     path('entry/<int:pk>/rating/', views.add_rating, name='add_rating'),
     
     # Categorias
-    path('categories/', views.KnowledgeCategoryListView.as_view(), name='category_list'),
+    path('categories/', views.knowledge_category_list, name='category_list'),
     path('categories/create/', views.KnowledgeCategoryCreateView.as_view(), name='category_create'),
     path('category/<int:pk>/', views.knowledge_category_detail, name='category_detail'),
     

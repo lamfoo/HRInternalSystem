@@ -15,6 +15,6 @@ urlpatterns = [
     path('stats/', views.document_stats, name='stats'),
     
     # Templates
-    path('templates/', views.DocumentTemplateListView.as_view(), name='template_list'),
+    path('templates/', views.document_template_list, name='template_list'),
     path('templates/create/', views.DocumentTemplateCreateView.as_view(), name='template_create'),
 ]
